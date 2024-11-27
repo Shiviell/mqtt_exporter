@@ -9,60 +9,69 @@ import urllib.parse
 
 hostName = "0.0.0.0"
 serverPort = 9502
-yml_line = {}
-prom_data = ""
 
 def prom_exporter (module,target,slaveID,byteOrder):
     metric = ""
-    files = glob.glob('./reg/%s*.modbus' % (module))
-    for file in files:
-        # Extract the command from the payload
-        command = "modbus -r %s -s %i -B %s %s \* -t 1" % (file,slaveID,byteOrder,target,)
-        if not command:
-            raise ValueError("Missing 'command' in payload")
-        # Execute the command
-        result = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        a = result.stdout.split('\n')
-        for line in a:
-            b = line.strip().split(': ')
-            c = b[0].split('_')
-            if isinstance(c[-1], int):
-                metric =+ '%s{IO="%s",address="%s",cell="%s"} %s\n' % ('_'.join(c[2:-1]),c[1],c[0],c[-1],b[1])
-            else:
-                metric =+ '%s{IO="%s",address="%s""} %s\n' % ('_'.join(c[2:]),c[1],c[0],b[1])
-    return metric 
+    try:
+        files = glob.glob('./reg/%s*.modbus' % (module))
+        if len(files) == 0 :
+            raise ValueError("Missing 'module file' in payload")
+        for file in files:
+            # Extract the command from the payload
+            command = "modbus -r %s -s %i -B %s %s \* -t 1" % (file,int(slaveID),byteOrder,target,)
+            # Execute the command
+            print (command)
+            result = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            a = result.stdout.split('\n')
+            for line in a:
+                b = line.strip().split(': ')
+                if len(b) == 2 : 
+                    c = b[0].split('_')
+                    try:
+                        metric += '%s{IO="%s",address="%s",cell="%i"} %s\n' % ('_'.join(c[2:-1]),c[1],c[0],int(c[-1]),b[1])
+                    except:
+                        metric += '%s{IO="%s",address="%s"} %s\n' % ('_'.join(c[2:]),c[1],c[0],b[1])
+        return metric
+    except Exception as e: return str(e)
 
                     
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
-        print (self.path)
-        if self.path == '/metrics':
-                    # Parse the URL to extract the query string
-            url_parts = urllib.parse.urlparse(self.path)
-            query_params = urllib.parse.parse_qs(url_parts.query)
-            metrics = prom_exporter (query_params['module'],query_params['target'],query_params['sub_target'],query_params['byteOrder'])
-            self.send_response(200)
-            self.send_header("Content-type", "text/plain; version=0.0.4; charset=utf-8")
+        #print (self.path)
+        try:
+            if self.path.split("?")[0] == '/metrics':
+                        # Parse the URL to extract the query string
+                url_parts = urllib.parse.urlparse(self.path)
+                query_params = urllib.parse.parse_qs(url_parts.query)
+                metrics = prom_exporter (query_params['module'][-1],query_params['target'][-1],query_params['sub_target'][-1],query_params['byteOrder'][-1])
+                self.send_response(200)
+                self.send_header("Content-type", "text/plain; version=0.0.4; charset=utf-8")
+                self.end_headers()
+                #self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
+                #with open('metrics.txt', 'rb') as file: 
+                #    self.wfile.write(file.read()) # Read the file and send the contents 
+                self.wfile.write(metrics.encode()) # Read the file and send the contents 
+            elif self.path == '/favicon.ico':
+                self.send_response(200)
+                self.send_header("Content-type", "image/x-icon")
+                self.end_headers()
+                with open('favicon.ico', 'rb') as file: 
+                    self.wfile.write(file.read()) # Read the file and send the contents 
+                
+            else:
+                self.send_response(200)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                with open('defult.html', 'rb') as file: 
+                    self.wfile.write(file.read()) # Read the file and send the contents 
+        except Exception as e:
+            # Handle errors and send an error response
+            self.send_response(400)
+            self.send_header("Content-Type", "application/json")
             self.end_headers()
-            #self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
-            #with open('metrics.txt', 'rb') as file: 
-            #    self.wfile.write(file.read()) # Read the file and send the contents 
-            self.wfile.write(metrics) # Read the file and send the contents 
-        elif self.path == '/favicon.ico':
-            self.send_response(200)
-            self.send_header("Content-type", "image/x-icon")
-            self.end_headers()
-            with open('favicon.ico', 'rb') as file: 
-                self.wfile.write(file.read()) # Read the file and send the contents 
-            
-        else:
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            with open('defult.html', 'rb') as file: 
-                self.wfile.write(file.read()) # Read the file and send the contents 
-
+            error_response = {"error": str(e)}
+            self.wfile.write(json.dumps(error_response).encode('utf-8'))
     def do_POST(self):
         try:
             # Get the content length

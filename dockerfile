@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.10-slim
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -11,4 +11,4 @@ COPY . /app/
 RUN pip install -r requirements.txt
 
 # Run server
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["python3", "server.py"]
