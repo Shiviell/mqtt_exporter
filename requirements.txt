@@ -1,4 +1,2 @@
 httplib2==0.20.4
-json
-yaml
 modbus_cli
