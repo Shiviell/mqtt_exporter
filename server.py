@@ -21,7 +21,7 @@ def prom_exporter (module,target,slaveID,byteOrder):
             command = "modbus -r %s -s %i -B %s %s \* -t 1" % (file,int(slaveID),byteOrder,target,)
             # Execute the command
             print (command)
-            result = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,timeout=180)
             a = result.stdout.split('\n')
             for line in a:
                 b = line.strip().split(': ')
@@ -37,6 +37,9 @@ def prom_exporter (module,target,slaveID,byteOrder):
                     
 
 class MyServer(BaseHTTPRequestHandler):
+    def setup(self):
+        BaseHTTPRequestHandler.setup(self)
+        self.request.settimeout(60)
     def do_GET(self):
         #print (self.path)
         try:
@@ -89,7 +92,7 @@ class MyServer(BaseHTTPRequestHandler):
                 raise ValueError("Missing 'command' in payload")
             
             # Execute the command
-            result = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,timeout=60)
             
             # Prepare the response
             response = {
