@@ -6,7 +6,7 @@
 1483_-_PCS_HMI_Modbus_Address	h@1483/f
 1485_-_PCS_ReModbus_Baud_Rate	h@1485/f
 1487_-_PCS_HMI_Modbus_Baud_Rate	h@1487/f
-1489_s_PCS_EMS_BMS__Communication_Fault_Time_Threshold	h@1489/f
+1489_s_PCS_BMS_Communication_Fault_Time_Threshold	h@1489/f
 1303_V_PCS_Output_AB_Line_Voltage	h@1303/f
 1305_V_PCS_Output_BC_Line_Voltage	h@1305/f
 1307_V_PCS_Output_CA_Line_Voltage	h@1307/f
