@@ -26,13 +26,15 @@ def prom_exporter (module,target,slaveID,byteOrder):
             for line in a:
                 b = line.strip().split(': ')
                 if len(b) == 2 : 
+                    if b[1].find(' '): d = b[1].split(' ')[0]
+                    else: d = b[1]
                     c = b[0].split('_')
                     try:
-                        if c[1] != '-': metric += '%s{IO="%s",address="%s",cell="%i",unit="%s"} %s\n' % ('_'.join(c[3:-1]),c[2],c[0],int(c[-1]),c[1],b[1])
-                        else: metric += '%s{IO="%s",address="%s",cell="%i"} %s\n' % ('_'.join(c[3:-1]),c[2],c[0],int(c[-1]),b[1])
+                        if c[1] != '-': metric += '%s{IO="%s",address="%s",cell="%i",unit="%s"} %s\n' % ('_'.join(c[3:-1]),c[2],c[0],int(c[-1]),c[1],d)
+                        else: metric += '%s{IO="%s",address="%s",cell="%i"} %s\n' % ('_'.join(c[3:-1]),c[2],c[0],int(c[-1]),d)
                     except:
-                        if c[1] != '-': metric += '%s{IO="%s",address="%s",unit="%s"} %s\n' % ('_'.join(c[3:]),c[2],c[0],c[1],b[1])
-                        else: metric += '%s{IO="%s",address="%s"} %s\n' % ('_'.join(c[3:]),c[2],c[0],b[1])
+                        if c[1] != '-': metric += '%s{IO="%s",address="%s",unit="%s"} %s\n' % ('_'.join(c[3:]),c[2],c[0],c[1],d)
+                        else: metric += '%s{IO="%s",address="%s"} %s\n' % ('_'.join(c[3:]),c[2],c[0],d)
         return metric
     except Exception as e: return str(e)
 
