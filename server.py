@@ -29,7 +29,7 @@ def prom_exporter (module,target,slaveID,byteOrder):
                     if b[1].find(' '): d = b[1].split(' ')[0]
                     else: d = b[1]
                     c = b[0].split('_')
-                    if c[0].find('/'): addr = 'address="%s",adj="%s"' % (c[0].split('/')[0],c[0].split('/')[-1])
+                    if c[0].find('/') > 0: addr = 'address="%s",adj="%s"' % (c[0].split('/')[0],c[0].split('/')[-1])
                     else: addr = addr = 'address="%s"' % (c[0])
 
                     try:
