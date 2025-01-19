@@ -12,9 +12,9 @@
 59_-_BMS_Cluster_DI6	h@59/f
 61_-_BMS_Cluster_DI7	h@61/f
 63_-_BMS_Cluster_DI8	h@63/f
-35_-_BMS_Cluster_Status	h@35/f
-65_V_BMS_Cluster_Voltage	h@65/f
-67_A_BMS_Cluster_Current	h@67/f
+#35_-_BMS_Cluster_Status	h@35/f
+#65_V_BMS_Cluster_Voltage	h@65/f
+#67_A_BMS_Cluster_Current	h@67/f
 69_C_BMS_Cluster_Module_Temperature	h@69/f
 71_%_BMS_Cluster_SOC	h@71/f
 73_%_BMS_Cluster_SOH	h@73/f
@@ -24,4 +24,4 @@
 119_kWh_BMS_Single_Discharge_Energy	h@119/f
 121_kWh_BMS_Chargeable_Energy	h@121/f
 123_kWh_BMS_Dischargeable_Energy	h@123/f
-1301_kW_BMS_Cluster_Real_time_Charge_Discharge_Power	h@1301/f
+#1301_kW_BMS_Cluster_Real_time_Charge_Discharge_Power	h@1301/f

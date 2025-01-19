@@ -9,7 +9,7 @@
 1327_Hz_PCS_Grid_Frequency	h@1327/f
 1329_-_PCS_Current_Grid_Phase_Sequence	h@1329/f
 1355_-_PCS_AC_Power_Factor	h@1355/f
-1371_-_PCS_Operating_Status	h@1371/f
+#1371_-_PCS_Operating_Status	h@1371/f
 1381_-_PCS_Phase_A_Power_Factor	h@1381/f
 1383_-_PCS_Phase_B_Power_Factor	h@1383/f
 1385_-_PCS_Phase_C_Power_Factor	h@1385/f
